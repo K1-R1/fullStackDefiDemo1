@@ -31,6 +31,7 @@ contract TokenFarm is Ownable {
         require(_amount > 0, "Amount of staked tokens must be > 0");
         require(tokenIsAllowed(_token), "Token is not available for staking");
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        updateUniqueTokensStaked(msg.sender, _token);
         stakingBalance[_token][msg.sender] =
             stakingBalance[_token][msg.sender] +
             _amount;
