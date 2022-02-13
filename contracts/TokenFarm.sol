@@ -62,7 +62,7 @@ contract TokenFarm is Ownable {
         for (uint256 i = 0; i < stakers.length; i++) {
             address recipient = stakers[i];
             uint256 userTotalValue = getUserTotalValue(recipient);
-            dappToken.transfer(recipient, userTotalValue * 2);
+            dappToken.transfer(recipient, userTotalValue);
         }
     }
 

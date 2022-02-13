@@ -3,6 +3,10 @@ from scripts.deploy import deploy_token_farm_and_dapp_token
 from brownie import config, network
 import pytest
 
+
+INITIAL_PRICE_FEED_VALUE = 2_000 * (10**18)
+
+
 def test_set_price_feed_contract():
     # Arrange
     if not config['networks'][network.show_active()]['local'] is True:
@@ -33,3 +37,14 @@ def test_stake_tokens(amount_staked):
 
     return token_farm, dapp_token
     
+def test_issue_tokens(amount_staked):
+    # Arrange
+    if not config['networks'][network.show_active()]['local'] is True:
+        pytest.skip('Only tested on local networkss')
+    account = get_account()
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
+    starting_balance = dapp_token.balanceOf(account.address)
+    # Act
+    token_farm.issueTokens({"from": account})
+    # Assert
+    assert (dapp_token.balanceOf(account.address) == starting_balance + INITIAL_PRICE_FEED_VALUE)
