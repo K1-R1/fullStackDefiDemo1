@@ -5,6 +5,7 @@ import pytest
 
 
 INITIAL_PRICE_FEED_VALUE = 2_000 * (10**18)
+DECIMALS = 8
 KEPT_BALANCE = 1_000 * (10**18)
 
 
@@ -117,3 +118,12 @@ def test_get_user_total_balance_with_different_tokens_and_amounts(amount_staked,
     total_eth_balance = token_farm.getUserTotalValue(account.address)
     print (total_eth_balance)
     assert total_eth_balance == INITIAL_PRICE_FEED_VALUE * 3
+
+def test_get_token_eth_price():
+    # Arrange
+    if not config['networks'][network.show_active()]['local'] is True:
+        pytest.skip('Only tested on local networks')
+    token_farm, dapp_token = deploy_token_farm_and_dapp_token()
+    # Act / Assert
+    initial_value = (INITIAL_PRICE_FEED_VALUE / 10**18) * 10**DECIMALS
+    assert token_farm.getTokenValue(dapp_token.address) == (initial_value, DECIMALS)
