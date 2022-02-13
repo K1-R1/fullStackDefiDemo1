@@ -74,3 +74,15 @@ def test_token_is_allowed():
     token_is_allowed = token_farm.tokenIsAllowed(dapp_token.address, {"from": account})
     # Assert
     assert token_is_allowed is True
+
+def test_stake_unapproved_tokens(random_erc20, amount_staked):
+    # Arrange
+    if not config['networks'][network.show_active()]['local'] is True:
+        pytest.skip('Only tested on local networks')
+    account = get_account()
+    token_farm, dapp_token = deploy_token_farm_and_dapp_token()
+    # Act
+    random_erc20.approve(token_farm.address, amount_staked, {"from": account})
+    # Assert
+    with pytest.raises(AttributeError):
+        token_farm.stakeTokens(amount_staked, random_erc20.address, {"from": account})
