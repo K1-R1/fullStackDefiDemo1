@@ -5,6 +5,7 @@ import pytest
 
 
 INITIAL_PRICE_FEED_VALUE = 2_000 * (10**18)
+KEPT_BALANCE = 1_000 * (10**18)
 
 
 def test_set_price_feed_contract():
@@ -86,3 +87,16 @@ def test_stake_unapproved_tokens(random_erc20, amount_staked):
     # Assert
     with pytest.raises(AttributeError):
         token_farm.stakeTokens(amount_staked, random_erc20.address, {"from": account})
+
+def test_unstake_tokens(amount_staked):
+    # Arrange
+    if not config['networks'][network.show_active()]['local'] is True:
+        pytest.skip('Only tested on local networks')
+    account = get_account()
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
+    # Act
+    token_farm.unstakeTokens(dapp_token.address, {"from": account})
+    # Assert
+    assert dapp_token.balanceOf(account.address) == KEPT_BALANCE
+    assert token_farm.stakingBalance(dapp_token.address, account.address) == 0
+    assert token_farm.uniqueTokensStaked(account.address) == 0
