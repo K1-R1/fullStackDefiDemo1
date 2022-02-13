@@ -10,7 +10,7 @@ INITIAL_PRICE_FEED_VALUE = 2_000 * (10**18)
 def test_set_price_feed_contract():
     # Arrange
     if not config['networks'][network.show_active()]['local'] is True:
-        pytest.skip('Only tested on local networkss')
+        pytest.skip('Only tested on local networks')
     account = get_account()
     non_owner = get_account(index=1)
     token_farm, dapp_token = deploy_token_farm_and_dapp_token()
@@ -24,7 +24,7 @@ def test_set_price_feed_contract():
 def test_stake_tokens(amount_staked):
     # Arrange
     if not config['networks'][network.show_active()]['local'] is True:
-        pytest.skip('Only tested on local networkss')
+        pytest.skip('Only tested on local networks')
     account = get_account()
     token_farm, dapp_token = deploy_token_farm_and_dapp_token()
     # Act
@@ -40,7 +40,7 @@ def test_stake_tokens(amount_staked):
 def test_issue_tokens(amount_staked):
     # Arrange
     if not config['networks'][network.show_active()]['local'] is True:
-        pytest.skip('Only tested on local networkss')
+        pytest.skip('Only tested on local networks')
     account = get_account()
     token_farm, dapp_token = test_stake_tokens(amount_staked)
     starting_balance = dapp_token.balanceOf(account.address)
@@ -52,7 +52,7 @@ def test_issue_tokens(amount_staked):
 def test_add_allowed_tokens():
     # Arrange
     if not config['networks'][network.show_active()]['local'] is True:
-        pytest.skip('Only tested on local networkss')
+        pytest.skip('Only tested on local networks')
     account = get_account()
     non_owner = get_account(index=1)
     token_farm, dapp_token = deploy_token_farm_and_dapp_token()
@@ -62,4 +62,15 @@ def test_add_allowed_tokens():
     assert token_farm.allowedTokens(0) == dapp_token.address
     with pytest.raises(AttributeError):
         token_farm.addAllowedTokens(dapp_token.address, {"from": non_owner})
-        
+
+def test_token_is_allowed():
+    # Arrange
+    if not config['networks'][network.show_active()]['local'] is True:
+        pytest.skip('Only tested on local networks')
+    account = get_account()
+    token_farm, dapp_token = deploy_token_farm_and_dapp_token()
+    # Act
+    test_add_allowed_tokens()
+    token_is_allowed = token_farm.tokenIsAllowed(dapp_token.address, {"from": account})
+    # Assert
+    assert token_is_allowed is True

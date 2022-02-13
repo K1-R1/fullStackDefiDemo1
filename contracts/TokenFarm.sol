@@ -44,7 +44,7 @@ contract TokenFarm is Ownable {
         allowedTokens.push(_token);
     }
 
-    function tokenIsAllowed(address _token) public returns (bool) {
+    function tokenIsAllowed(address _token) public view returns (bool) {
         for (uint256 i = 0; i < allowedTokens.length; i++) {
             if (allowedTokens[i] == _token) {
                 return true;
