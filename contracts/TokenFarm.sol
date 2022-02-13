@@ -65,7 +65,7 @@ contract TokenFarm is Ownable {
         }
     }
 
-    function getUserTotalValue(addres _user) public view returns (uint256) {
+    function getUserTotalValue(address _user) public view returns (uint256) {
         uint256 totalValue = 0;
         require(uniqueTokensStaked[_user] > 0, "No tokens staked");
         for (uint256 i = 0; i < allowedTokens.length; i++) {
@@ -81,11 +81,11 @@ contract TokenFarm is Ownable {
         view
         returns (uint256)
     {
-        if (uniqueTokensStaked[_user] = 0) {
+        if (uniqueTokensStaked[_user] == 0) {
             return 0;
         }
         (uint256 price, uint256 decimals) = getTokenValue(_token);
-        return ((stakingBalance[_token][user] * price) / (10**decimals));
+        return ((stakingBalance[_token][_user] * price) / (10**decimals));
     }
 
     function getTokenValue(address _token)
@@ -100,5 +100,13 @@ contract TokenFarm is Ownable {
         (, int256 price, , , ) = priceFeed.latestRoundData();
         uint256 decimals = uint256(priceFeed.decimals());
         return (uint256(price), decimals);
+    }
+
+    function unstakeTokens(address _token) public {
+        uint256 balance = stakingBalance[_token][msg.sender];
+        require(balance > 0, "None of the selected token staked");
+        IERC20(_token).transfer(msg.sender, balance);
+        stakingBalance[_token][msg.sender] = 0;
+        uniqueTokensStaked[msg.sender] = uniqueTokensStaked[msg.sender] - 1;
     }
 }
