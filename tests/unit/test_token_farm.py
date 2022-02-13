@@ -127,3 +127,17 @@ def test_get_token_eth_price():
     # Act / Assert
     initial_value = (INITIAL_PRICE_FEED_VALUE / 10**18) * 10**DECIMALS
     assert token_farm.getTokenValue(dapp_token.address) == (initial_value, DECIMALS)
+
+def test_get_user_token_staking_balance_value(amount_staked):
+    # Arrange
+    if not config['networks'][network.show_active()]['local'] is True:
+        pytest.skip('Only tested on local networks')
+    account = get_account()
+    token_farm, dapp_token = deploy_token_farm_and_dapp_token()
+    # Act
+    dapp_token.approve(token_farm.address, amount_staked, {"from": account})
+    token_farm.stakeTokens(amount_staked, dapp_token.address, {"from": account})
+    # Assert
+    eth_balance_token = token_farm.getUserSingleTokenValue(account.address, dapp_token.address)
+    assert eth_balance_token == 2_000*10**18
+    
