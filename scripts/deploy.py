@@ -1,4 +1,3 @@
-from os import access
 from scripts.general_scripts import get_account, get_contract
 from brownie import config, network, DappToken, TokenFarm
 
