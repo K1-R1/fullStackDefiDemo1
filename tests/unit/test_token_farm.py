@@ -48,3 +48,18 @@ def test_issue_tokens(amount_staked):
     token_farm.issueTokens({"from": account})
     # Assert
     assert (dapp_token.balanceOf(account.address) == starting_balance + INITIAL_PRICE_FEED_VALUE)
+
+def test_add_allowed_tokens():
+    # Arrange
+    if not config['networks'][network.show_active()]['local'] is True:
+        pytest.skip('Only tested on local networkss')
+    account = get_account()
+    non_owner = get_account(index=1)
+    token_farm, dapp_token = deploy_token_farm_and_dapp_token()
+    # Act
+    token_farm.addAllowedTokens(dapp_token.address, {"from": account})
+    # Assert
+    assert token_farm.allowedTokens(0) == dapp_token.address
+    with pytest.raises(AttributeError):
+        token_farm.addAllowedTokens(dapp_token.address, {"from": non_owner})
+        
