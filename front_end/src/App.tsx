@@ -1,13 +1,13 @@
-import React from 'react'
+import React from "react"
+import { Header } from "./features/Header"
+import { Main } from "./features/Main"
 import { ChainId, DAppProvider } from "@usedapp/core"
-import { Header } from "./components/Header"
 import { Container } from "@material-ui/core"
-import { Main } from "./components/Main"
 
-function App() {
+export const App = () => {
   return (
     <DAppProvider config={{
-      supportedChains: [ChainId.Kovan],
+      supportedChains: [ChainId.Kovan, ChainId.Rinkeby],
       notifications: {
         expirationPeriod: 1000,
         checkInterval: 1000
@@ -20,5 +20,4 @@ function App() {
     </DAppProvider>
   )
 }
-
 export default App
