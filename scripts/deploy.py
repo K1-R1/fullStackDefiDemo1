@@ -1,4 +1,5 @@
 from scripts.general_scripts import get_account, get_contract
+from scripts.update_front_end import update_front_end
 from brownie import config, network, DappToken, TokenFarm
 
 
@@ -6,9 +7,9 @@ KEPT_BALANCE = 1_000 * (10**18)
 
 
 def main():
-    deploy_token_farm_and_dapp_token()
+    deploy_token_farm_and_dapp_token(front_end_update=True)
 
-def deploy_token_farm_and_dapp_token():
+def deploy_token_farm_and_dapp_token(front_end_update=False):
     account = get_account()
     dapp_token = DappToken.deploy({'from':account}, publish_source=config['networks'][network.show_active()]['verify'])
     token_farm = TokenFarm.deploy(dapp_token.address, {'from':account}, publish_source=config['networks'][network.show_active()]['verify'])
@@ -24,6 +25,9 @@ def deploy_token_farm_and_dapp_token():
         weth_token: get_contract('eth_usd_price_feed')
     }
     add_allowed_tokens(token_farm, allowed_tokens, account)
+
+    if front_end_update:
+        update_front_end()
 
     return token_farm, dapp_token
     
